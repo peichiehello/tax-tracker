@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>貨物稅申請收件追蹤 — 銘勁汽車</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F6F3;--surface:#fff;--s2:#F0EFE9;--border:rgba(0,0,0,.1);--bmed:rgba(0,0,0,.18);--text:#1A1A18;--sub:#6B6B66;--hint:#A0A09A;--r:8px;--rl:12px;--mono:'IBM Plex Mono',monospace;--gbg:#E1F5EE;--gtxt:#085041;--gbdr:#0F6E56;--abg:#FAEEDA;--atxt:#633806;--abdr:#854F0B;--bbg:#E6F1FB;--btxt:#0C447C;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh;}
+.topbar{background:var(--surface);border-bottom:.5px solid var(--border);position:sticky;top:0;z-index:100;}
+.topbar-in{max-width:1100px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:56px;}
+.brand{display:flex;align-items:center;gap:10px;}
+.brand-mark{width:32px;height:32px;background:var(--text);border-radius:6px;display:flex;align-items:center;justify-content:center;}
+.brand-mark i{color:#fff;font-size:16px;}
+.brand-name{font-size:15px;font-weight:700;}
+.brand-sub{font-size:11px;color:var(--sub);margin-top:-2px;}
+.op-wrap{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--sub);}
+.op-wrap select{font-size:13px;font-family:'Noto Sans TC',sans-serif;padding:5px 10px;border:.5px solid var(--bmed);border-radius:var(--r);background:var(--surface);color:var(--text);cursor:pointer;}
+.shell{max-width:1100px;margin:0 auto;padding:0 1.5rem 4rem;}
+.nav{display:flex;gap:2px;padding:1.25rem 0 0;margin-bottom:1.5rem;border-bottom:.5px solid var(--border);}
+.ntab{padding:8px 14px 10px;font-size:13px;font-weight:500;color:var(--sub);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-.5px;transition:all .15s;display:flex;align-items:center;gap:5px;font-family:'Noto Sans TC',sans-serif;}
+.ntab:hover{color:var(--text);}
+.ntab.active{color:var(--text);border-bottom-color:var(--text);}
+.bdg{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;border-radius:99px;font-size:10px;font-weight:700;}
+.ba{background:var(--abg);color:var(--atxt);}
+.bg{background:var(--gbg);color:var(--gtxt);}
+.page{display:none;}
+.page.active{display:block;}
+.card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1rem;}
+.sec{font-size:11px;font-weight:700;color:var(--sub);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:var(--r);font-size:13px;font-weight:500;font-family:'Noto Sans TC',sans-serif;border:.5px solid var(--bmed);background:var(--surface);color:var(--text);cursor:pointer;transition:all .12s;white-space:nowrap;}
+.btn:hover{background:var(--s2);}
+.btn:active{transform:scale(.98);}
+.btn-dk{background:var(--text);color:#fff;border-color:var(--text);}
+.btn-dk:hover{opacity:.85;background:var(--text);}
+.btn-g{border-color:var(--gbdr);color:var(--gtxt);}
+.btn-g:hover{background:var(--gbg);}
+.btn-a{border-color:var(--abdr);color:var(--atxt);}
+.btn-a:hover{background:var(--abg);}
+.btn-sm{padding:4px 10px;font-size:12px;}
+.field{display:flex;flex-direction:column;gap:4px;}
+.field label{font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;}
+input,select,textarea{font-family:'Noto Sans TC',sans-serif;font-size:13px;padding:7px 10px;border:.5px solid var(--bmed);border-radius:var(--r);background:var(--surface);color:var(--text);outline:none;width:100%;transition:border-color .12s;}
+input:focus,select:focus,textarea:focus{border-color:var(--text);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.loc-btn{padding:14px 8px;border-radius:var(--r);border:.5px solid var(--bmed);background:var(--surface);cursor:pointer;text-align:center;font-size:14px;font-weight:500;font-family:'Noto Sans TC',sans-serif;color:var(--text);transition:all .12s;width:100%;}
+.loc-btn:hover{background:var(--s2);}
+.loc-btn.sel{border-color:var(--text);border-width:1.5px;background:var(--s2);}
+.type-btn{padding:10px 12px;border-radius:var(--r);border:.5px solid var(--bmed);background:var(--surface);cursor:pointer;font-size:13px;font-weight:500;font-family:'Noto Sans TC',sans-serif;color:var(--text);transition:all .12s;display:flex;align-items:center;gap:6px;width:100%;}
+.type-btn:hover{background:var(--s2);}
+.type-btn.sel{border-color:var(--text);border-width:1.5px;background:var(--s2);}
+.uzone{border:1.5px dashed var(--bmed);border-radius:var(--rl);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:all .15s;}
+.uzone:hover{border-color:var(--text);background:var(--s2);}
+.uzone input{display:none;}
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;padding:8px 12px;font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;border-bottom:.5px solid var(--border);white-space:nowrap;}
+td{padding:9px 12px;border-bottom:.5px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:var(--s2);}
+.sbdg{display:inline-flex;align-items:center;padding:3px 8px;border-radius:99px;font-size:11px;font-weight:600;}
+.sp{background:var(--abg);color:var(--atxt);}
+.sr{background:var(--gbg);color:var(--gtxt);}
+.ss{background:var(--bbg);color:var(--btxt);}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.5rem;}
+.sbox{background:var(--surface);border:.5px solid var(--border);border-radius:var(--rl);padding:1rem 1.25rem;}
+.slbl{font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.sval{font-size:28px;font-weight:700;line-height:1;}
+.snote{font-size:11px;color:var(--hint);margin-top:4px;}
+.fbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center;}
+.fbar select{width:auto;font-size:12px;padding:5px 10px;}
+.alert{padding:10px 14px;border-radius:var(--r);font-size:13px;margin-top:10px;display:flex;align-items:center;gap:8px;}
+.aok{background:var(--gbg);color:var(--gtxt);}
+.aerr{background:#FCEBEB;color:#791F1F;}
+.ainfo{background:var(--bbg);color:var(--btxt);}
+.ld{display:flex;align-items:center;gap:8px;padding:12px 14px;background:var(--s2);border-radius:var(--r);font-size:13px;color:var(--sub);margin-top:10px;}
+.spin{width:16px;height:16px;border:2px solid var(--bmed);border-top-color:var(--text);border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.empty{text-align:center;padding:3rem 1rem;color:var(--hint);}
+.empty i{font-size:32px;display:block;margin-bottom:8px;}
+.op-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:.5px solid var(--border);font-size:13px;}
+.op-item:last-child{border-bottom:none;}
+@media(max-width:640px){.stats{grid-template-columns:repeat(2,1fr);}.g2{grid-template-columns:1fr;}.ntab span{display:none;}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="topbar-in">
+    <div class="brand">
+      <div class="brand-mark"><i class="ti ti-file-check"></i></div>
+      <div>
+        <div class="brand-name">貨物稅收件追蹤</div>
+        <div class="brand-sub">銘勁汽車 顧客關係部</div>
+      </div>
+    </div>
+    <div class="op-wrap">
+      <i class="ti ti-user" style="font-size:14px"></i>
+      <select id="op-sel"></select>
+    </div>
+  </div>
+</div>
+<div class="shell">
+  <div class="nav">
+    <button class="ntab active" onclick="go('upload')"><i class="ti ti-upload"></i><span>上傳清單</span></button>
+    <button class="ntab" onclick="go('pending')"><i class="ti ti-inbox"></i><span>待收件</span><span class="bdg ba" id="b-pend">0</span></button>
+    <button class="ntab" onclick="go('received')"><i class="ti ti-package"></i><span>待送件</span><span class="bdg bg" id="b-recv">0</span></button>
+    <button class="ntab" onclick="go('report')"><i class="ti ti-chart-bar"></i><span>統計報表</span></button>
+    <button class="ntab" onclick="go('settings')"><i class="ti ti-settings"></i><span>設定</span></button>
+  </div>
+
+  <div id="page-upload" class="page active">
+    <div class="card">
+      <div class="sec">選擇據點</div>
+      <div class="g3" style="margin-bottom:1.25rem">
+        <button class="loc-btn" id="lb-zl" onclick="selLoc('中壢')"><i class="ti ti-map-pin" style="display:block;font-size:20px;margin-bottom:4px"></i>中壢</button>
+        <button class="loc-btn" id="lb-bd" onclick="selLoc('八德')"><i class="ti ti-map-pin" style="display:block;font-size:20px;margin-bottom:4px"></i>八德</button>
+        <button class="loc-btn" id="lb-ty" onclick="selLoc('桃園')"><i class="ti ti-map-pin" style="display:block;font-size:20px;margin-bottom:4px"></i>桃園</button>
+      </div>
+      <div class="sec">申請類型</div>
+      <div class="g2" style="margin-bottom:1.25rem">
+        <button class="type-btn" id="tb-new" onclick="selType('新車貨物稅')"><i class="ti ti-car"></i>新車貨物稅</button>
+        <button class="type-btn" id="tb-trade" onclick="selType('舊換新貨物稅')"><i class="ti ti-refresh"></i>舊換新貨物稅</button>
+      </div>
+      <div class="sec">上傳截圖</div>
+      <div class="uzone" onclick="document.getElementById('fi').click()">
+        <input type="file" id="fi" accept="image/*" onchange="handleUp(event)">
+        <div style="font-size:36px;color:var(--hint);margin-bottom:8px"><i class="ti ti-photo-up"></i></div>
+        <div style="font-size:14px;font-weight:500">點此選擇截圖上傳</div>
+        <div style="font-size:12px;color:var(--sub);margin-top:4px">支援 JPG、PNG — AI 自動辨識表格內容</div>
+      </div>
+      <div id="up-msg"></div>
+    </div>
+    <div id="prev-card" class="card" style="display:none">
+      <div class="sec">辨識結果預覽 — 確認正確後再匯入</div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>車牌</th><th>引擎號碼</th><th>客戶姓名</th><th>領牌日期</th><th>車種</th></tr></thead>
+          <tbody id="prev-body"></tbody>
+        </table>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px">
+        <button class="btn" onclick="cancelPrev()">取消</button>
+        <button class="btn btn-dk" onclick="doImport()"><i class="ti ti-check"></i>確認匯入</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-pending" class="page">
+    <div class="fbar">
+      <select id="fp-loc" onchange="renderPend()"><option value="">全部據點</option><option>中壢</option><option>八德</option><option>桃園</option></select>
+      <select id="fp-type" onchange="renderPend()"><option value="">全部類型</option><option>新車貨物稅</option><option>舊換新貨物稅</option></select>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>據點</th><th>類型</th><th>車牌</th><th>客戶姓名</th><th>引擎號碼</th><th>領牌日期</th><th>匯入時間</th><th>操作</th></tr></thead>
+          <tbody id="pend-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-received" class="page">
+    <div class="fbar">
+      <select id="fr-loc" onchange="renderRecv()"><option value="">全部據點</option><option>中壢</option><option>八德</option><option>桃園</option></select>
+      <button class="btn btn-a" onclick="batchSend()" style="margin-left:auto"><i class="ti ti-send"></i>批次送件</button>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr>
+            <th><input type="checkbox" id="chk-all" onchange="toggleAll(this)" style="width:16px;height:16px;cursor:pointer"></th>
+            <th>據點</th><th>類型</th><th>車牌</th><th>客戶姓名</th><th>收件時間</th><th>收件人</th><th>操作</th>
+          </tr></thead>
+          <tbody id="recv-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-report" class="page">
+    <div class="stats" id="stats-row"></div>
+    <div class="fbar">
+      <select id="frp-loc" onchange="renderRpt()"><option value="">全部據點</option><option>中壢</option><option>八德</option><option>桃園</option></select>
+      <select id="frp-st" onchange="renderRpt()"><option value="">全部狀態</option><option value="pending">未收件</option><option value="received">已收件待送</option><option value="sent">已送件</option></select>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>據點</th><th>類型</th><th>車牌</th><th>客戶姓名</th><th>狀態</th><th>匯入時間</th><th>收件時間</th><th>送件時間</th><th>收件人</th><th>送件人</th></tr></thead>
+          <tbody id="rpt-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="page-settings" class="page">
+    <div class="card">
+      <div style="font-size:15px;font-weight:700;margin-bottom:4px"><i class="ti ti-brand-github" style="margin-right:6px"></i>GitHub 連線設定</div>
+      <div style="font-size:12px;color:var(--sub);margin-bottom:14px">資料儲存於你的 GitHub Repository，所有人開啟同一網址即可共用。</div>
+      <div class="g2" style="margin-bottom:12px">
+        <div class="field">
+          <label>GitHub Token（ghp_...）</label>
+          <input type="password" id="gh-tok" placeholder="ghp_xxxxxxxxxxxxxxxx" style="font-family:'IBM Plex Mono',monospace;font-size:12px">
+        </div>
+        <div class="field">
+          <label>Repository（帳號/repo名稱）</label>
+          <input type="text" id="gh-repo" placeholder="peichiehello/tax-tracker">
+        </div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn" onclick="testConn()"><i class="ti ti-plug"></i>測試連線</button>
+        <button class="btn btn-dk" onclick="saveConf()"><i class="ti ti-device-floppy"></i>儲存設定</button>
+      </div>
+      <div id="conn-msg"></div>
+    </div>
+    <div class="card">
+      <div style="font-size:15px;font-weight:700;margin-bottom:12px"><i class="ti ti-users" style="margin-right:6px"></i>操作人員管理</div>
+      <div id="op-list" style="margin-bottom:12px"></div>
+      <div style="display:flex;gap:8px">
+        <input type="text" id="new-op" placeholder="輸入姓名後新增" style="flex:1">
+        <button class="btn" onclick="addOp()"><i class="ti ti-plus"></i>新增</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const GF='records.json';
+let S={records:[],operators:['中壢據點會計'],config:{token:'',repo:'peichiehello/tax-tracker'},selLoc:'',selType:'',preview:[],_sha:''};
+
+function loadLocal(){
+  try{const d=localStorage.getItem('mjcar_tx');if(d){const p=JSON.parse(d);S.records=p.records||[];S.operators=p.operators||['中壢據點會計'];S.config=p.config||S.config;S._sha=p._sha||'';}}catch(e){}
+}
+function saveLocal(){
+  localStorage.setItem('mjcar_tx',JSON.stringify({records:S.records,operators:S.operators,config:S.config,_sha:S._sha}));
+}
+async function ghLoad(){
+  if(!S.config.token||!S.config.repo)return;
+  try{
+    const r=await fetch(`https://api.github.com/repos/${S.config.repo}/contents/${GF}`,{headers:{Authorization:`token ${S.config.token}`,Accept:'application/vnd.github.v3+json'}});
+    if(r.ok){const d=await r.json();const c=JSON.parse(atob(d.content.replace(/\n/g,'')));S.records=c.records||[];S.operators=c.operators||S.operators;S._sha=d.sha;saveLocal();renderAll();}
+  }catch(e){}
+}
+async function ghSave(){
+  saveLocal();
+  if(!S.config.token||!S.config.repo)return;
+  const content=btoa(unescape(encodeURIComponent(JSON.stringify({records:S.records,operators:S.operators},null,2))));
+  const body={message:'update',content};
+  if(S._sha)body.sha=S._sha;
+  try{
+    const r=await fetch(`https://api.github.com/repos/${S.config.repo}/contents/${GF}`,{method:'PUT',headers:{Authorization:`token ${S.config.token}`,'Content-Type':'application/json'},body:JSON.stringify(body)});
+    if(r.ok){const d=await r.json();S._sha=d.content.sha;saveLocal();}
+  }catch(e){}
+}
+function go(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  const idx=['upload','pending','received','report','settings'].indexOf(name);
+  document.querySelectorAll('.ntab')[idx].classList.add('active');
+  if(name==='pending')renderPend();
+  if(name==='received')renderRecv();
+  if(name==='report')renderRpt();
+  if(name==='settings')renderSettings();
+}
+function selLoc(l){
+  S.selLoc=l;
+  document.querySelectorAll('.loc-btn').forEach(b=>b.classList.remove('sel'));
+  const m={'中壢':'lb-zl','八德':'lb-bd','桃園':'lb-ty'};
+  document.getElementById(m[l]).classList.add('sel');
+}
+function selType(t){
+  S.selType=t;
+  document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('sel'));
+  const m={'新車貨物稅':'tb-new','舊換新貨物稅':'tb-trade'};
+  document.getElementById(m[t]).classList.add('sel');
+}
+async function handleUp(e){
+  const file=e.target.files[0];if(!file)return;
+  if(!S.selLoc){showMsg('up-msg','請先選擇據點','err');return;}
+  if(!S.selType){showMsg('up-msg','請先選擇申請類型','err');return;}
+  if(!S.config.token){showMsg('up-msg','請先至「設定」頁填入 GitHub Token','err');return;}
+  showLd('up-msg','AI 辨識截圖中，請稍候...');
+  const b64=await toB64(file);
+  const mt=file.type||'image/jpeg';
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'你是表格辨識助手。從圖片辨識表格，只回傳JSON陣列，格式：[{"plate":"車牌","engine":"引擎號碼","name":"客戶姓名","date":"領牌日期","model":"車種"}]。無法辨識的欄位填空字串。只回傳JSON，不要任何其他文字。',messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:mt,data:b64.split(',')[1]}},{type:'text',text:'辨識截圖表格，回傳JSON陣列。'}]}]})});
+    const data=await res.json();
+    const txt=data.content?.map(c=>c.text||'').join('')||'';
+    const rows=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    S.preview=rows;
+    document.getElementById('prev-body').innerHTML=rows.map(r=>`<tr><td>${r.plate||''}</td><td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${r.engine||''}</td><td>${r.name||''}</td><td>${r.date||''}</td><td>${r.model||''}</td></tr>`).join('');
+    document.getElementById('prev-card').style.display='block';
+    document.getElementById('up-msg').innerHTML='';
+  }catch(err){showMsg('up-msg','辨識失敗，請確認截圖清晰度或重試','err');}
+  e.target.value='';
+}
+function cancelPrev(){document.getElementById('prev-card').style.display='none';S.preview=[];}
+async function doImport(){
+  const now=new Date().toLocaleString('zh-TW',{hour12:false});
+  const nr=S.preview.map(r=>({id:Date.now()+'_'+Math.random().toString(36).slice(2,5),location:S.selLoc,type:S.selType,plate:r.plate||'',engine:r.engine||'',name:r.name||'',licDate:r.date||'',model:r.model||'',status:'pending',importTime:now,recvTime:'',recvBy:'',sendTime:'',sendBy:''}));
+  S.records.push(...nr);
+  await ghSave();
+  cancelPrev();
+  renderAll();
+  showMsg('up-msg',`成功匯入 ${nr.length} 筆資料（${S.selLoc}・${S.selType}）`,'ok');
+}
+async function recvOne(id){
+  const op=document.getElementById('op-sel').value;
+  const r=S.records.find(x=>x.id===id);if(!r)return;
+  r.status='received';r.recvTime=new Date().toLocaleString('zh-TW',{hour12:false});r.recvBy=op;
+  await ghSave();renderPend();renderAll();
+}
+async function sendOne(id){
+  const op=document.getElementById('op-sel').value;
+  const r=S.records.find(x=>x.id===id);if(!r)return;
+  r.status='sent';r.sendTime=new Date().toLocaleString('zh-TW',{hour12:false});r.sendBy=op;
+  await ghSave();renderRecv();renderAll();
+}
+async function batchSend(){
+  const op=document.getElementById('op-sel').value;
+  const checked=document.querySelectorAll('.sc:checked');
+  if(!checked.length){alert('請先勾選要送件的記錄');return;}
+  const now=new Date().toLocaleString('zh-TW',{hour12:false});
+  checked.forEach(cb=>{const r=S.records.find(x=>x.id===cb.dataset.id);if(r){r.status='sent';r.sendTime=now;r.sendBy=op;}});
+  await ghSave();renderRecv();renderAll();
+}
+function toggleAll(cb){document.querySelectorAll('.sc').forEach(c=>c.checked=cb.checked);}
+function renderPend(){
+  const loc=document.getElementById('fp-loc')?.value||'';
+  const type=document.getElementById('fp-type')?.value||'';
+  const rows=S.records.filter(r=>r.status==='pending'&&(!loc||r.location===loc)&&(!type||r.type===type));
+  const tb=document.getElementById('pend-body');
+  if(!rows.length){tb.innerHTML='<tr><td colspan="8"><div class="empty"><i class="ti ti-inbox-off"></i>目前無待收件記錄</div></td></tr>';return;}
+  tb.innerHTML=rows.map(r=>`<tr>
+    <td>${r.location}</td><td><span class="sbdg sp">${r.type}</span></td>
+    <td style="font-weight:500">${r.plate}</td><td>${r.name}</td>
+    <td style="font-family:'IBM Plex Mono',monospace;font-size:11px">${r.engine}</td>
+    <td>${r.licDate}</td><td style="font-size:11px;color:var(--sub)">${r.importTime}</td>
+    <td><button class="btn btn-sm btn-g" onclick="recvOne('${r.id}')"><i class="ti ti-inbox"></i>收件</button></td>
+  </tr>`).join('');
+}
+function renderRecv(){
+  const loc=document.getElementById('fr-loc')?.value||'';
+  const rows=S.records.filter(r=>r.status==='received'&&(!loc||r.location===loc));
+  const tb=document.getElementById('recv-body');
+  if(!rows.length){tb.innerHTML='<tr><td colspan="8"><div class="empty"><i class="ti ti-package-off"></i>目前無待送件記錄</div></td></tr>';return;}
+  tb.innerHTML=rows.map(r=>`<tr>
+    <td><input type="checkbox" class="sc" data-id="${r.id}" style="width:16px;height:16px;cursor:pointer"></td>
+    <td>${r.location}</td><td><span class="sbdg sp">${r.type}</span></td>
+    <td style="font-weight:500">${r.plate}</td><td>${r.name}</td>
+    <td style="font-size:11px">${r.recvTime}</td>
+    <td style="font-size:12px;color:var(--sub)">${r.recvBy}</td>
+    <td><button class="btn btn-sm btn-a" onclick="sendOne('${r.id}')"><i class="ti ti-send"></i>送件</button></td>
+  </tr>`).join('');
+}
+function renderRpt(){
+  const loc=document.getElementById('frp-loc')?.value||'';
+  const st=document.getElementById('frp-st')?.value||'';
+  const all=S.records;
+  document.getElementById('stats-row').innerHTML=`
+    <div class="sbox"><div class="slbl">全部記錄</div><div class="sval">${all.length}</div><div class="snote">筆</div></div>
+    <div class="sbox"><div class="slbl" style="color:var(--atxt)">待收件</div><div class="sval" style="color:var(--atxt)">${all.filter(r=>r.status==='pending').length}</div><div class="snote">筆</div></div>
+    <div class="sbox"><div class="slbl" style="color:var(--gtxt)">待送件</div><div class="sval" style="color:var(--gtxt)">${all.filter(r=>r.status==='received').length}</div><div class="snote">筆</div></div>
+    <div class="sbox"><div class="slbl" style="color:var(--btxt)">已送件</div><div class="sval" style="color:var(--btxt)">${all.filter(r=>r.status==='sent').length}</div><div class="snote">筆</div></div>`;
+  const rows=all.filter(r=>(!loc||r.location===loc)&&(!st||r.status===st));
+  const smap={pending:'<span class="sbdg sp">未收件</span>',received:'<span class="sbdg sr">已收件</span>',sent:'<span class="sbdg ss">已送件</span>'};
+  const tb=document.getElementById('rpt-body');
+  if(!rows.length){tb.innerHTML='<tr><td colspan="10"><div class="empty"><i class="ti ti-database-off"></i>無符合條件的記錄</div></td></tr>';return;}
+  tb.innerHTML=rows.map(r=>`<tr>
+    <td>${r.location}</td><td style="font-size:11px">${r.type}</td>
+    <td style="font-weight:500">${r.plate}</td><td>${r.name}</td>
+    <td>${smap[r.status]||r.status}</td>
+    <td style="font-size:11px;color:var(--sub)">${r.importTime}</td>
+    <td style="font-size:11px;color:var(--sub)">${r.recvTime||'—'}</td>
+    <td style="font-size:11px;color:var(--sub)">${r.sendTime||'—'}</td>
+    <td style="font-size:12px">${r.recvBy||'—'}</td>
+    <td style="font-size:12px">${r.sendBy||'—'}</td>
+  </tr>`).join('');
+}
+function renderSettings(){
+  const tk=document.getElementById('gh-tok');const rp=document.getElementById('gh-repo');
+  if(tk)tk.value=S.config.token||'';
+  if(rp)rp.value=S.config.repo||'peichiehello/tax-tracker';
+  document.getElementById('op-list').innerHTML=S.operators.map((op,i)=>`
+    <div class="op-item"><span>${op}</span>
+    ${i===0?'<span style="font-size:11px;color:var(--hint)">預設</span>':`<button class="btn btn-sm" onclick="rmOp(${i})" style="color:#791F1F;border-color:#F09595"><i class="ti ti-trash"></i></button>`}
+    </div>`).join('');
+  const sel=document.getElementById('op-sel');const cur=sel.value;
+  sel.innerHTML=S.operators.map(op=>`<option${op===cur?' selected':''}>${op}</option>`).join('');
+}
+async function testConn(){
+  const tok=document.getElementById('gh-tok').value.trim();
+  const repo=document.getElementById('gh-repo').value.trim();
+  if(!tok||!repo){showMsg('conn-msg','請填入 Token 和 Repository','err');return;}
+  showLd('conn-msg','連線測試中...');
+  try{
+    const r=await fetch(`https://api.github.com/repos/${repo}`,{headers:{Authorization:`token ${tok}`}});
+    r.ok?showMsg('conn-msg','✓ 連線成功，Repository 存取正常','ok'):showMsg('conn-msg','連線失敗，請確認 Token 權限及 Repo 名稱','err');
+  }catch(e){showMsg('conn-msg','連線失敗：'+e.message,'err');}
+}
+function saveConf(){
+  S.config.token=document.getElementById('gh-tok').value.trim();
+  S.config.repo=document.getElementById('gh-repo').value.trim();
+  saveLocal();
+  showMsg('conn-msg','設定已儲存，正在從 GitHub 載入資料...','info');
+  ghLoad().then(()=>showMsg('conn-msg','✓ 資料同步完成','ok'));
+}
+function addOp(){
+  const inp=document.getElementById('new-op');const name=inp.value.trim();
+  if(!name||S.operators.includes(name))return;
+  S.operators.push(name);inp.value='';saveLocal();renderSettings();
+}
+function rmOp(i){S.operators.splice(i,1);saveLocal();renderSettings();}
+function renderAll(){renderBadges();}
+function renderBadges(){
+  document.getElementById('b-pend').textContent=S.records.filter(r=>r.status==='pending').length;
+  document.getElementById('b-recv').textContent=S.records.filter(r=>r.status==='received').length;
+}
+function showMsg(id,txt,type){
+  const el=document.getElementById(id);if(!el)return;
+  const cls={ok:'aok',err:'aerr',info:'ainfo'}[type]||'ainfo';
+  el.innerHTML=`<div class="alert ${cls}"><i class="ti ti-${type==='ok'?'check':type==='err'?'alert-circle':'info-circle'}"></i>${txt}</div>`;
+}
+function showLd(id,txt){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=`<div class="ld"><div class="spin"></div>${txt}</div>`;
+}
+function toB64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});}
+
+loadLocal();
+renderBadges();
+if(S.config.token)ghLoad();
+</script>
+</body>
+</html>

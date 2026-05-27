@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MG 銘勁汽車 退稅申請系統</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F4F0;--surface:#fff;--s2:#EEEDE8;--border:rgba(0,0,0,.1);--bmed:rgba(0,0,0,.2);
+  --text:#1A1A18;--sub:#6B6B66;--hint:#A0A09A;--r:6px;--rl:10px;
+  --red:#E1001A;--red2:#B30015;--mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh;}
+
+/* Topbar */
+.topbar{background:var(--text);color:#fff;position:sticky;top:0;z-index:100;}
+.topbar-in{max-width:860px;margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;height:52px;gap:12px;}
+.topbar-logo{width:28px;height:28px;background:var(--red);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.topbar-logo i{color:#fff;font-size:15px;}
+.topbar-title{font-size:14px;font-weight:700;letter-spacing:.02em;}
+.topbar-sub{font-size:11px;color:rgba(255,255,255,.5);margin-left:auto;}
+
+/* Shell */
+.shell{max-width:860px;margin:0 auto;padding:1.5rem;}
+
+/* Steps */
+.steps{display:flex;gap:0;margin-bottom:1.5rem;background:var(--surface);border:.5px solid var(--border);border-radius:var(--rl);overflow:hidden;}
+.step{flex:1;padding:12px 10px;text-align:center;font-size:12px;font-weight:500;color:var(--hint);border-right:.5px solid var(--border);cursor:pointer;transition:all .15s;position:relative;}
+.step:last-child{border-right:none;}
+.step.active{color:var(--red);background:#FFF5F5;}
+.step.done{color:var(--sub);background:var(--s2);}
+.step-num{display:block;font-size:18px;font-weight:700;line-height:1;margin-bottom:3px;}
+.step.active .step-num{color:var(--red);}
+.step.done .step-num{color:var(--sub);}
+
+/* Cards */
+.card{background:var(--surface);border:.5px solid var(--border);border-radius:var(--rl);padding:1.25rem;margin-bottom:1rem;}
+.card-title{font-size:13px;font-weight:700;color:var(--red);border-bottom:1.5px solid var(--red);padding-bottom:5px;margin-bottom:1rem;display:inline-block;}
+
+/* Form */
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.field label{font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;}
+.field label .req{color:var(--red);}
+input,select,textarea{font-family:'Noto Sans TC',sans-serif;font-size:13px;padding:8px 10px;border:.5px solid var(--bmed);border-radius:var(--r);background:var(--surface);color:var(--text);outline:none;width:100%;transition:border-color .12s;}
+input:focus,select:focus,textarea:focus{border-color:var(--red);}
+textarea{resize:vertical;min-height:60px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+
+/* Type selector */
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem;}
+.type-btn{padding:16px 12px;border-radius:var(--r);border:.5px solid var(--bmed);background:var(--surface);cursor:pointer;font-size:14px;font-weight:500;font-family:'Noto Sans TC',sans-serif;color:var(--text);transition:all .12s;text-align:center;}
+.type-btn i{display:block;font-size:24px;margin-bottom:6px;color:var(--hint);}
+.type-btn:hover{background:var(--s2);}
+.type-btn.sel{border-color:var(--red);border-width:1.5px;background:#FFF5F5;}
+.type-btn.sel i{color:var(--red);}
+
+/* Car selector */
+.car-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem;}
+.car-btn{padding:10px 6px;border-radius:var(--r);border:.5px solid var(--bmed);background:var(--surface);cursor:pointer;font-size:13px;font-weight:500;font-family:'Noto Sans TC',sans-serif;color:var(--text);transition:all .12s;text-align:center;}
+.car-btn:hover{background:var(--s2);}
+.car-btn.sel{border-color:var(--red);border-width:1.5px;background:#FFF5F5;color:var(--red);}
+.car-maker{font-size:10px;color:var(--hint);margin-top:2px;display:block;}
+.car-btn.sel .car-maker{color:var(--red);opacity:.7;}
+
+/* Upload */
+.upload-zone{border:1.5px dashed var(--bmed);border-radius:var(--rl);padding:1.5rem;text-align:center;cursor:pointer;transition:all .15s;position:relative;margin-bottom:8px;}
+.upload-zone:hover{border-color:var(--red);background:#FFF5F5;}
+.upload-zone input{display:none;}
+.upload-zone i{font-size:28px;color:var(--hint);display:block;margin-bottom:6px;}
+.upload-zone .uz-title{font-size:13px;font-weight:500;}
+.upload-zone .uz-sub{font-size:11px;color:var(--sub);margin-top:3px;}
+.upload-zone.has-file{border-color:var(--red);background:#FFF5F5;}
+.upload-zone.has-file i{color:var(--red);}
+.file-name{font-size:11px;color:var(--red);margin-top:4px;font-family:var(--mono);}
+.attach-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.attach-item{background:var(--s2);border-radius:var(--r);padding:10px 12px;}
+.attach-label{font-size:11px;font-weight:600;color:var(--sub);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;display:flex;align-items:center;gap:4px;}
+.attach-label .req{color:var(--red);}
+
+/* Relation */
+.rel-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:8px;}
+.rel-btn{padding:7px 4px;border-radius:var(--r);border:.5px solid var(--bmed);background:var(--surface);cursor:pointer;font-size:12px;font-family:'Noto Sans TC',sans-serif;color:var(--sub);transition:all .12s;text-align:center;}
+.rel-btn:hover{background:var(--s2);}
+.rel-btn.sel{border-color:var(--red);background:#FFF5F5;color:var(--red);font-weight:500;}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;border-radius:var(--r);font-size:13px;font-weight:500;font-family:'Noto Sans TC',sans-serif;border:.5px solid var(--bmed);background:var(--surface);color:var(--text);cursor:pointer;transition:all .12s;white-space:nowrap;}
+.btn:hover{background:var(--s2);}
+.btn-red{background:var(--red);color:#fff;border-color:var(--red);}
+.btn-red:hover{background:var(--red2);border-color:var(--red2);}
+.btn-lg{padding:12px 24px;font-size:14px;}
+.btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:1rem;}
+
+/* Info box */
+.info-box{background:#EFF6FF;border-left:3px solid #2563EB;padding:10px 12px;border-radius:0 var(--r) var(--r) 0;font-size:12px;color:#1E40AF;margin-bottom:12px;}
+
+/* Loading overlay */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:flex;align-items:center;justify-content:center;}
+.overlay.hide{display:none;}
+.ov-box{background:var(--surface);border-radius:var(--rl);padding:2rem;text-align:center;min-width:200px;}
+.spin{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--red);border-radius:50%;animation:spin .6s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Success */
+.success-box{text-align:center;padding:3rem 1rem;}
+.success-icon{width:64px;height:64px;background:#DCFCE7;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;}
+.success-icon i{font-size:32px;color:#16A34A;}
+
+/* Page sections */
+.page-sec{display:none;}
+.page-sec.active{display:block;}
+
+/* Alert */
+.alert{padding:10px 12px;border-radius:var(--r);font-size:12px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.alert-err{background:#FEE2E2;color:#991B1B;}
+
+@media(max-width:600px){
+  .g2,.g3,.car-grid,.rel-grid,.attach-grid{grid-template-columns:1fr 1fr;}
+  .type-grid{grid-template-columns:1fr 1fr;}
+}
+
+/* Print styles */
+@media print{
+  .no-print{display:none!important;}
+  body{background:#fff;}
+  @page{size:A4 landscape;margin:6mm;}
+  @media print{
+    body{background:#fff;}
+    .no-print{display:none!important;}
+    .print-page{page-break-after:always;width:277mm;min-height:190mm;}
+  }
+  .print-sheet{background:#fff;width:100%;font-family:'Noto Sans TC',sans-serif;color:#111;font-size:9pt;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <div class="topbar-in">
+    <div class="topbar-logo"><i class="ti ti-file-invoice"></i></div>
+    <div class="topbar-title">MG 銘勁汽車 退稅申請系統</div>
+    <div class="topbar-sub">銷售顧問作業介面</div>
+  </div>
+</div>
+
+<div class="shell no-print">
+  <!-- Steps -->
+  <div class="steps" id="steps">
+    <div class="step active" id="step1"><span class="step-num">1</span>基本資料</div>
+    <div class="step" id="step2"><span class="step-num">2</span>客戶資料</div>
+    <div class="step" id="step3"><span class="step-num">3</span>附件上傳</div>
+    <div class="step" id="step4"><span class="step-num">4</span>預覽列印</div>
+  </div>
+
+  <div id="alert-area"></div>
+
+  <!-- Step 1: 基本資料 -->
+  <div id="sec1" class="page-sec active">
+    <div class="card">
+      <div class="card-title">申請類型</div>
+      <div class="type-grid">
+        <button class="type-btn" id="tb-tax" onclick="selType('tax')">
+          <i class="ti ti-car"></i>新車貨物稅
+        </button>
+        <button class="type-btn" id="tb-trade" onclick="selType('trade')">
+          <i class="ti ti-refresh"></i>舊換新申請
+        </button>
+      </div>
+      <div class="card-title">車型選擇</div>
+      <div class="car-grid">
+        <button class="car-btn" id="cb-G50 PLUS" onclick="selCar('G50 PLUS','裕隆汽車製造股份有限公司')">
+          G50 PLUS<span class="car-maker">裕隆</span>
+        </button>
+        <button class="car-btn" id="cb-HS" onclick="selCar('HS','中華汽車工業股份有限公司')">
+          HS<span class="car-maker">中華</span>
+        </button>
+        <button class="car-btn" id="cb-EHS" onclick="selCar('EHS','中華汽車工業股份有限公司')">
+          EHS<span class="car-maker">中華</span>
+        </button>
+        <button class="car-btn" id="cb-ZS" onclick="selCar('ZS','中華汽車工業股份有限公司')">
+          ZS<span class="car-maker">中華</span>
+        </button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">據點與銷售顧問</div>
+      <div class="g2">
+        <div class="field">
+          <label>據點 <span class="req">*</span></label>
+          <select id="f-location" onchange="filterStaff()">
+            <option value="">請選擇據點</option>
+            <option value="銘勁中壢所">中壢</option>
+            <option value="銘勁八德所">八德</option>
+            <option value="銘勁桃園所">桃園</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>銷售顧問 <span class="req">*</span></label>
+          <select id="f-staff">
+            <option value="">請先選擇據點</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-red btn-lg" onclick="goStep(2)"><i class="ti ti-arrow-right"></i>下一步</button>
+    </div>
+  </div>
+
+  <!-- Step 2: 客戶資料 -->
+  <div id="sec2" class="page-sec">
+    <div class="card">
+      <div class="card-title">客戶基本資料</div>
+      <div class="g2">
+        <div class="field">
+          <label id="lbl-plate">車牌號碼（數字）<span class="req">*</span></label>
+          <input type="text" id="f-plate" placeholder="例：3233">
+        </div>
+        <div class="field">
+          <label>客戶姓名 <span class="req">*</span></label>
+          <input type="text" id="f-name" placeholder="請輸入全名">
+        </div>
+        <div class="field">
+          <label>身分證字號 <span class="req">*</span></label>
+          <input type="text" id="f-idno" placeholder="A123456789">
+        </div>
+        <div class="field">
+          <label>領牌日期 <span class="req">*</span></label>
+          <input type="text" id="f-license-date" placeholder="民國 115/03/01">
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">退款帳戶資訊</div>
+      <div class="g3">
+        <div class="field">
+          <label>銀行代號 <span class="req">*</span></label>
+          <input type="text" id="f-bank" list="bankList" placeholder="700 - 郵局">
+          <datalist id="bankList">
+            <option value="004 - 臺灣銀行"><option value="005 - 土地銀行">
+            <option value="006 - 合作金庫"><option value="007 - 第一銀行">
+            <option value="008 - 華南銀行"><option value="009 - 彰化銀行">
+            <option value="012 - 富邦銀行"><option value="013 - 國泰世華">
+            <option value="017 - 兆豐銀行"><option value="050 - 臺灣企銀">
+            <option value="700 - 郵局"><option value="803 - 聯邦銀行">
+            <option value="806 - 元大銀行"><option value="807 - 永豐銀行">
+            <option value="808 - 玉山銀行"><option value="812 - 台新銀行">
+            <option value="822 - 中國信託">
+          </datalist>
+        </div>
+        <div class="field">
+          <label>分行支號 <span class="req">*</span></label>
+          <input type="text" id="f-branch" placeholder="郵局填 0">
+        </div>
+        <div class="field">
+          <label>銀行帳號 <span class="req">*</span></label>
+          <input type="text" id="f-account" placeholder="請輸入完整帳號">
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--sub);margin-top:4px">
+        🔍 分行支號查詢：<a href="https://www.fisc.com.tw/TC/Service?CAID=51254999-5d15-4ddf-8e54-4b2cdb2a8399" target="_blank" style="color:#2563EB">財金公司查詢系統</a>
+      </div>
+    </div>
+
+    <!-- 舊換新專用 -->
+    <div id="trade-extra" class="card" style="display:none">
+      <div class="card-title">舊換新專用資料</div>
+      <div class="g2" style="margin-bottom:12px">
+        <div class="field">
+          <label>報廢日期 <span class="req">*</span></label>
+          <input type="text" id="f-scrap-date" placeholder="民國 115/03/01">
+        </div>
+        <div class="field">
+          <label>中古車廠牌 <span class="req">*</span></label>
+          <select id="f-old-brand">
+            <option value="">請選擇廠牌</option>
+            <option>KIA</option><option>BMW</option><option>Mercedes-Benz</option>
+            <option>TOYOTA</option><option>三陽</option><option>中華</option>
+            <option>日產</option><option>納智捷</option><option>馬自達</option>
+            <option>國瑞</option><option>裕隆</option><option>鈴木</option>
+            <option>福特六和</option><option>福特</option><option>其他</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" style="margin-bottom:8px">
+        <label>新舊車主關係（二等親）<span class="req">*</span></label>
+      </div>
+      <div class="rel-grid" id="rel-grid">
+        <button class="rel-btn" onclick="selRel('本人')">本人</button>
+        <button class="rel-btn" onclick="selRel('配偶')">配偶</button>
+        <button class="rel-btn" onclick="selRel('父子')">父子</button>
+        <button class="rel-btn" onclick="selRel('母女')">母女</button>
+        <button class="rel-btn" onclick="selRel('兄弟')">兄弟</button>
+        <button class="rel-btn" onclick="selRel('姊妹')">姊妹</button>
+        <button class="rel-btn" onclick="selRel('女婿')">女婿</button>
+        <button class="rel-btn" onclick="selRel('公媳')">公媳</button>
+        <button class="rel-btn" onclick="selRel('婆媳')">婆媳</button>
+        <button class="rel-btn" onclick="selRel('妹婿')">妹婿</button>
+        <button class="rel-btn" onclick="selRel('兄嫂')">兄嫂</button>
+        <button class="rel-btn" onclick="selRel('姊夫')">姊夫</button>
+        <button class="rel-btn" onclick="selRel('弟媳')">弟媳</button>
+        <button class="rel-btn" onclick="selRel('岳父')">岳父</button>
+        <button class="rel-btn" onclick="selRel('岳母')">岳母</button>
+        <button class="rel-btn" onclick="selRel('祖孫')">祖孫</button>
+      </div>
+      <div id="rel-display" style="font-size:12px;color:var(--red);margin-top:4px;font-weight:500"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="goStep(1)"><i class="ti ti-arrow-left"></i>上一步</button>
+      <button class="btn btn-red btn-lg" onclick="goStep(3)"><i class="ti ti-arrow-right"></i>下一步</button>
+    </div>
+  </div>
+
+  <!-- Step 3: 附件上傳 -->
+  <div id="sec3" class="page-sec">
+    <div class="info-box">
+      <i class="ti ti-info-circle"></i> 上傳後對應項目將自動勾選於回條。附件 D（身分及關係證明）支援多張上傳，系統自動合併為 PDF。
+    </div>
+
+    <!-- 貨物稅附件 -->
+    <div id="attach-tax">
+      <div class="card">
+        <div class="card-title">附件上傳 — 新車貨物稅</div>
+        <div class="attach-grid">
+          <div class="attach-item">
+            <div class="attach-label"><i class="ti ti-paperclip"></i>A. 新車領牌登記書 <span class="req">*</span></div>
+            <div class="upload-zone" id="uz-tax-A" onclick="document.getElementById('fi-tax-A').click()">
+              <input type="file" id="fi-tax-A" accept="image/*,application/pdf" onchange="handleFile('tax-A',this)">
+              <i class="ti ti-photo-up"></i>
+              <div class="uz-title">點此上傳</div>
+              <div class="uz-sub">JPG / PNG / PDF</div>
+            </div>
+            <div class="file-name" id="fn-tax-A"></div>
+          </div>
+          <div class="attach-item">
+            <div class="attach-label"><i class="ti ti-paperclip"></i>B. 新車行照 <span class="req">*</span></div>
+            <div class="upload-zone" id="uz-tax-B" onclick="document.getElementById('fi-tax-B').click()">
+              <input type="file" id="fi-tax-B" accept="image/*,application/pdf" onchange="handleFile('tax-B',this)">
+              <i class="ti ti-photo-up"></i>
+              <div class="uz-title">點此上傳</div>
+              <div class="uz-sub">JPG / PNG / PDF</div>
+            </div>
+            <div class="file-name" id="fn-tax-B"></div>
+          </div>
+          <div class="attach-item" style="grid-column:span 2">
+            <div class="attach-label"><i class="ti ti-paperclip"></i>C. 新車主存摺封面 <span class="req">*</span></div>
+            <div class="upload-zone" id="uz-tax-C" onclick="document.getElementById('fi-tax-C').click()">
+              <input type="file" id="fi-tax-C" accept="image/*,application/pdf" onchange="handleFile('tax-C',this)">
+              <i class="ti ti-photo-up"></i>
+              <div class="uz-title">點此上傳</div>
+              <div class="uz-sub">JPG / PNG / PDF</div>
+            </div>
+            <div class="file-name" id="fn-tax-C"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 舊換新附件 -->
+    <div id="attach-trade" style="display:none">
+      <div class="card">
+        <div class="card-title">附件上傳 — 舊換新</div>
+        <div class="attach-grid">
+          <div class="attach-item">
+            <div class="attach-label"><i class="ti ti-paperclip"></i>A. 新車領牌登記書 <span class="req">*</span></div>
+            <div class="upload-zone" id="uz-tr-A" onclick="document.getElementById('fi-tr-A').click()">
+              <input type="file" id="fi-tr-A" accept="image/*,application/pdf" onchange="handleFile('tr-A',this)">
+              <i class="ti ti-photo-up"></i><div class="uz-title">點此上傳</div><div class="uz-sub">JPG / PNG / PDF</div>
+            </div>
+            <div class="file-name" id="fn-tr-A"></div>
+          </div>
+          <div class="attach-item">
+            <div class="attach-label"><i class="ti ti-paperclip"></i>B. 新車行照 <span class="req">*</span></div>
+            <div class="upload-zone" id="uz-tr-B" onclick="document.getElementById('fi-tr-B').click()">
+              <input type="file" id="fi-tr-B" accept="image/*,application/pdf" onchange="handleFile('tr-B',this)">
+              <i class="ti ti-photo-up"></i><div class="uz-title">點此上傳</div><div class="uz-sub">JPG / PNG / PDF</div>
+            </div>
+            <div class="file-name" id="fn-tr-B"></div>
+          </div>
+          <div class="attach-item">
+            <div class="attach-label"><i class="ti ti-paperclip"></i>C. 舊車行照 <span class="req">*</span></div>
+            <div class="upload-zone" id="uz-tr-C" onclick="document.getElementById('fi-tr-C').click()">
+              <input type="file" id="fi-tr-C" accept="image/*,application/pdf" onchange="handleFile('tr-C',this)">
+              <i class="ti ti-photo-up"></i><div class="uz-title">點此上傳</div><div class="uz-sub">JPG / PNG / PDF</div>
+            </div>
+            <div class="file-name" id="fn-tr-C"></div>
+          </div>
+          <div class="attach-item">
+            <div class="attach-label"><i class="ti ti-paperclip"></i>D. 新車主身分証 <span class="req">*</span></div>
+            <div class="upload-zone" id="uz-tr-D" onclick="document.getElementById('fi-tr-D').click()">
+              <input type="file" id="fi-tr-D" accept="image/*,application/pdf" onchange="handleFile('tr-D',this)">
+              <i class="ti ti-photo-up"></i><div class="uz-title">點此上傳</div><div class="uz-sub">JPG / PNG / PDF</div>
+            </div>
+            <div class="file-name" id="fn-tr-D"></div>
+          </div>
+          <div class="attach-item">
+            <div class="attach-label"><i class="ti ti-paperclip"></i>E. 舊車証明文件（可多張）<span class="req">*</span></div>
+            <div id="multi-upload-E">
+              <div class="multi-file-row" id="mfr-E-0" style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+                <div class="upload-zone" id="uz-tr-E-0" onclick="document.getElementById('fi-tr-E-0').click()" style="flex:1;padding:10px;margin-bottom:0">
+                  <input type="file" id="fi-tr-E-0" accept="image/*,application/pdf" onchange="handleMultiFile('E',0,this)">
+                  <i class="ti ti-photo-up"></i>
+                  <div class="uz-title" style="font-size:12px">點此上傳</div>
+                </div>
+                <div class="file-name" id="fn-tr-E-0" style="font-size:10px;max-width:80px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis"></div>
+              </div>
+            </div>
+            <button type="button" onclick="addFileSlot('E')" style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--red);border:1px dashed var(--red);background:transparent;padding:5px 10px;border-radius:var(--r);cursor:pointer;width:100%;justify-content:center;font-family:'Noto Sans TC',sans-serif;margin-top:4px">
+              <i class="ti ti-plus"></i>新增一張
+            </button>
+          </div>
+          <div class="attach-item">
+            <div class="attach-label"><i class="ti ti-paperclip"></i>F. 車輛異動登記書 <span class="req">*</span></div>
+            <div class="upload-zone" id="uz-tr-F" onclick="document.getElementById('fi-tr-F').click()">
+              <input type="file" id="fi-tr-F" accept="image/*,application/pdf" onchange="handleFile('tr-F',this)">
+              <i class="ti ti-photo-up"></i><div class="uz-title">點此上傳</div><div class="uz-sub">JPG / PNG / PDF</div>
+            </div>
+            <div class="file-name" id="fn-tr-F"></div>
+          </div>
+          <div class="attach-item">
+            <div class="attach-label"><i class="ti ti-paperclip"></i>G. 廢機動車輛回收管制聯單 <span class="req">*</span></div>
+            <div class="upload-zone" id="uz-tr-G" onclick="document.getElementById('fi-tr-G').click()">
+              <input type="file" id="fi-tr-G" accept="image/*,application/pdf" onchange="handleFile('tr-G',this)">
+              <i class="ti ti-photo-up"></i><div class="uz-title">點此上傳</div><div class="uz-sub">JPG / PNG / PDF</div>
+            </div>
+            <div class="file-name" id="fn-tr-G"></div>
+          </div>
+          <div class="attach-item">
+            <div class="attach-label"><i class="ti ti-paperclip"></i>H. 新車主存摺封面 <span class="req">*</span></div>
+            <div class="upload-zone" id="uz-tr-H" onclick="document.getElementById('fi-tr-H').click()">
+              <input type="file" id="fi-tr-H" accept="image/*,application/pdf" onchange="handleFile('tr-H',this)">
+              <i class="ti ti-photo-up"></i><div class="uz-title">點此上傳</div><div class="uz-sub">JPG / PNG / PDF</div>
+            </div>
+            <div class="file-name" id="fn-tr-H"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="goStep(2)"><i class="ti ti-arrow-left"></i>上一步</button>
+      <button class="btn btn-red btn-lg" onclick="goStep(4)"><i class="ti ti-printer"></i>預覽列印</button>
+    </div>
+  </div>
+
+  <!-- Step 4: 預覽列印 -->
+  <div id="sec4" class="page-sec">
+    <div class="card">
+      <div class="card-title">列印確認</div>
+      <div id="preview-summary" style="font-size:13px;line-height:2;color:var(--sub)"></div>
+      <hr style="border:none;border-top:.5px solid var(--border);margin:12px 0">
+      <div style="font-size:12px;color:var(--sub);margin-bottom:12px">
+        列印內容：申請退稅同意書（×2份）＋ 退稅申請資料回條（×1份）＋ 附件圖檔
+      </div>
+      <div class="btn-row" style="justify-content:flex-start">
+        <button class="btn" onclick="goStep(3)"><i class="ti ti-arrow-left"></i>返回修改</button>
+        <button class="btn btn-red btn-lg" onclick="doPrint()"><i class="ti ti-printer"></i>開始列印</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 列印區（隱藏，列印時顯示）-->
+<div id="print-area" style="display:none">
+</div>
+
+<!-- Loading -->
+<div class="overlay hide" id="ov">
+  <div class="ov-box">
+    <div class="spin"></div>
+    <div id="ov-txt" style="font-size:13px;color:var(--sub)">處理中...</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script>
+// ── 狀態 ────────────────────────────────────────
+const F = {
+  type:'', car:'', maker:'', location:'', staff:'',
+  plate:'', name:'', idno:'', licDate:'', bankCode:'', branch:'', account:'',
+  scrapDate:'', oldBrand:'', relation:'',
+  files:{}
+};
+
+const STAFF_LIST = [
+  {name:'李詮瑋',dept:'銘勁中壢所'},{name:'宋美琳',dept:'銘勁中壢所'},
+  {name:'邱垂傑',dept:'銘勁中壢所'},{name:'陳冠旻',dept:'銘勁中壢所'},
+  {name:'余育誠',dept:'銘勁中壢所'},{name:'李秋燕',dept:'銘勁中壢所'},
+  {name:'楊珈忻',dept:'銘勁中壢所'},{name:'周呈儒',dept:'銘勁中壢所'},
+  {name:'林祐生',dept:'銘勁中壢所'},{name:'許曉琪',dept:'銘勁中壢所'},
+  {name:'邱玉華',dept:'銘勁中壢所'},{name:'曾健軒',dept:'銘勁中壢所'},
+];
+
+// ── 步驟切換 ─────────────────────────────────────
+function goStep(n){
+  if(n>1 && !validateStep(n-1)) return;
+  for(let i=1;i<=4;i++){
+    document.getElementById('sec'+i).classList.toggle('active',i===n);
+    const s=document.getElementById('step'+i);
+    s.classList.toggle('active',i===n);
+    s.classList.toggle('done',i<n);
+  }
+  if(n===4) renderPreview();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function validateStep(n){
+  const err=document.getElementById('alert-area');
+  err.innerHTML='';
+  if(n===1){
+    if(!F.type){showErr('請選擇申請類型');return false;}
+    if(!F.car){showErr('請選擇車型');return false;}
+    if(!document.getElementById('f-location').value){showErr('請選擇據點');return false;}
+    if(!document.getElementById('f-staff').value){showErr('請選擇銷售顧問');return false;}
+    F.location=document.getElementById('f-location').value;
+    F.staff=document.getElementById('f-staff').value;
+  }
+  if(n===2){
+    F.plate=document.getElementById('f-plate').value.trim();
+    F.name=document.getElementById('f-name').value.trim();
+    F.idno=document.getElementById('f-idno').value.trim();
+    F.licDate=document.getElementById('f-license-date').value.trim();
+    F.bankCode=document.getElementById('f-bank').value.trim();
+    F.branch=document.getElementById('f-branch').value.trim();
+    F.account=document.getElementById('f-account').value.trim();
+    if(!F.plate){showErr('請填入'+(F.type==='tax'?'車牌號碼':'引擎號碼'));return false;}
+    if(!F.name){showErr('請填入客戶姓名');return false;}
+    if(!F.idno){showErr('請填入身分證字號');return false;}
+    if(!F.bankCode||!F.branch||!F.account){showErr('請填入完整退款帳戶資訊');return false;}
+    if(F.type==='trade'){
+      F.scrapDate=document.getElementById('f-scrap-date').value.trim();
+      F.oldBrand=document.getElementById('f-old-brand').value;
+      if(!F.relation){showErr('請選擇新舊車主關係');return false;}
+    }
+  }
+  return true;
+}
+
+function showErr(msg){
+  document.getElementById('alert-area').innerHTML=`<div class="alert alert-err"><i class="ti ti-alert-circle"></i>${msg}</div>`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── 選擇 ─────────────────────────────────────────
+function selType(t){
+  F.type=t;
+  document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('tb-'+t).classList.add('sel');
+  document.getElementById('trade-extra').style.display=t==='trade'?'block':'none';
+  document.getElementById('attach-tax').style.display=t==='tax'?'block':'none';
+  document.getElementById('attach-trade').style.display=t==='trade'?'block':'none';
+  document.getElementById('lbl-plate').textContent=(t==='tax'?'車牌號碼（數字）':'引擎號碼')+'*';
+  document.getElementById('f-plate').placeholder=t==='tax'?'例：3233':'例：15C4EFGS';
+}
+
+function selCar(car,maker){
+  F.car=car; F.maker=maker;
+  document.querySelectorAll('.car-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('cb-'+car).classList.add('sel');
+}
+
+function selRel(r){
+  F.relation=r;
+  document.querySelectorAll('.rel-btn').forEach(b=>b.classList.remove('sel'));
+  event.target.classList.add('sel');
+  document.getElementById('rel-display').textContent='已選擇：'+r;
+}
+
+function filterStaff(){
+  const loc=document.getElementById('f-location').value;
+  const sel=document.getElementById('f-staff');
+  sel.innerHTML='<option value="">請選擇銷售顧問</option>';
+  STAFF_LIST.filter(s=>s.dept===loc).forEach(s=>{
+    const o=document.createElement('option');
+    o.value=s.name; o.textContent=s.name;
+    sel.appendChild(o);
+  });
+}
+
+// ── 多張上傳（舊車証明）────────────────────────────
+let multiFileCount = { E: 1 };
+const multiFiles = { E: {} };
+
+function handleMultiFile(key, idx, input) {
+  const file = input.files[0]; if(!file) return;
+  multiFiles[key][idx] = file;
+  const uz = document.getElementById(`uz-tr-${key}-${idx}`);
+  const fn = document.getElementById(`fn-tr-${key}-${idx}`);
+  uz.classList.add('has-file');
+  uz.querySelector('i').className='ti ti-check';
+  uz.querySelector('.uz-title').textContent='已上傳';
+  fn.textContent = file.name.length > 10 ? file.name.slice(0,10)+'...' : file.name;
+  // 同步到 F.files 供回條打勾
+  F.files['tr-E'] = Object.values(multiFiles['E']);
+}
+
+function addFileSlot(key) {
+  const idx = multiFileCount[key]++;
+  const container = document.getElementById(`multi-upload-${key}`);
+  const div = document.createElement('div');
+  div.className = 'multi-file-row';
+  div.id = `mfr-${key}-${idx}`;
+  div.style.cssText = 'display:flex;align-items:center;gap:6px;margin-bottom:6px';
+  div.innerHTML = `
+    <div class="upload-zone" id="uz-tr-${key}-${idx}" onclick="document.getElementById('fi-tr-${key}-${idx}').click()" style="flex:1;padding:10px;margin-bottom:0">
+      <input type="file" id="fi-tr-${key}-${idx}" accept="image/*,application/pdf" onchange="handleMultiFile('${key}',${idx},this)">
+      <i class="ti ti-photo-up"></i>
+      <div class="uz-title" style="font-size:12px">點此上傳</div>
+    </div>
+    <div class="file-name" id="fn-tr-${key}-${idx}" style="font-size:10px;max-width:80px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis"></div>
+    <button type="button" onclick="removeFileSlot('${key}',${idx})" style="background:none;border:none;color:var(--hint);cursor:pointer;font-size:16px;padding:2px"><i class="ti ti-x"></i></button>`;
+  container.appendChild(div);
+}
+
+function removeFileSlot(key, idx) {
+  const el = document.getElementById(`mfr-${key}-${idx}`);
+  if(el) el.remove();
+  delete multiFiles[key][idx];
+  F.files['tr-E'] = Object.values(multiFiles['E']).filter(Boolean);
+}
+
+function handleFile(key,input){
+  const files=input.files;
+  if(!files.length) return;
+  F.files[key]=files;
+  const uz=document.getElementById('uz-'+key);
+  const fn=document.getElementById('fn-'+key);
+  uz.classList.add('has-file');
+  uz.querySelector('i').className='ti ti-check';
+  uz.querySelector('.uz-title').textContent='已上傳';
+  fn.textContent=files.length>1?`${files.length} 個檔案`:files[0].name;
+}
+
+// ── 預覽 ─────────────────────────────────────────
+function renderPreview(){
+  const locMap={'銘勁中壢所':'中壢','銘勁八德所':'八德','銘勁桃園所':'桃園'};
+  const typeLabel=F.type==='tax'?'新車貨物稅':'舊換新';
+  const plateLabel=F.type==='tax'?'車牌號碼':'引擎號碼';
+  let html=`
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 16px">
+      <span style="color:var(--sub)">申請類型</span><span style="font-weight:500;color:var(--red)">${typeLabel}</span>
+      <span style="color:var(--sub)">車型</span><span style="font-weight:500">${F.car}（${F.maker}）</span>
+      <span style="color:var(--sub)">據點</span><span>${locMap[F.location]||F.location}</span>
+      <span style="color:var(--sub)">銷售顧問</span><span>${F.staff}</span>
+      <span style="color:var(--sub)">${plateLabel}</span><span>${F.plate}</span>
+      <span style="color:var(--sub)">客戶姓名</span><span>${F.name}</span>
+      <span style="color:var(--sub)">身分證字號</span><span>${F.idno}</span>
+      <span style="color:var(--sub)">領牌日期</span><span>${F.licDate}</span>
+      <span style="color:var(--sub)">退款帳號</span><span>${F.bankCode} / ${F.branch} / ${F.account}</span>
+      ${F.type==='trade'?`<span style="color:var(--sub)">報廢日期</span><span>${F.scrapDate}</span>
+      <span style="color:var(--sub)">新舊車主關係</span><span>${F.relation}</span>`:''}
+    </div>`;
+  const keys=F.type==='tax'?['tax-A','tax-B','tax-C']:['tr-A','tr-B','tr-C','tr-D','tr-E','tr-F','tr-G','tr-H'];
+  const uploaded=keys.filter(k=>F.files[k]).length;
+  html+=`<div style="margin-top:12px;font-size:12px;color:var(--sub)">已上傳附件：${uploaded} / ${keys.length} 項</div>`;
+  document.getElementById('preview-summary').innerHTML=html;
+}
+
+// ── 列印 ─────────────────────────────────────────
+async function doPrint(){
+  showOv('準備列印資料...');
+  const today=new Date();
+  const roc=today.getFullYear()-1911;
+  const mm=String(today.getMonth()+1).padStart(2,'0');
+  const dd=String(today.getDate()).padStart(2,'0');
+  const dateStr=`${roc}/${mm}/${dd}`;
+  const locMap={'銘勁中壢所':'中壢','銘勁八德所':'八德','銘勁桃園所':'桃園'};
+  const locName=locMap[F.location]||F.location;
+  const isTax=F.type==='tax';
+
+  const imgCache={};
+  for(const [k,files] of Object.entries(F.files)){
+    if(!files) continue;
+    const fileList=Array.isArray(files)?files:[files];
+    if(fileList.length>0 && fileList[0]){
+      if(k==='tr-E' && fileList.length>1){
+        // 多張：全部轉 base64
+        imgCache[k]=[];
+        for(const f of fileList){ if(f) imgCache[k].push(await toB64(f)); }
+      } else {
+        imgCache[k]=await toB64(fileList[0]);
+      }
+    }
+  }
+
+  const formHtml=genFormHtml(isTax, dateStr);
+  const receiptHtml=genReceiptHtml(isTax, dateStr, locName);
+  const attachHtml=genAttachHtml(isTax, imgCache, dateStr, locName);
+
+  // 開新視窗強制橫式列印
+  const pw=window.open('','_blank','width=1200,height=800');
+  const fullHtml='<!DOCTYPE html><html><head><meta charset="UTF-8">'
+    +'<style>*{box-sizing:border-box;margin:0;padding:0;}body{font-family:sans-serif;background:#fff;}'
+    +'@page{size:A4 landscape;margin:6mm;}'
+    +'.print-page{page-break-after:always;width:277mm;height:190mm;overflow:hidden;}</style>'
+    +'</head><body>'
+    +formHtml+receiptHtml+attachHtml
+    +'</body></html>';
+  pw.document.write(fullHtml);
+  pw.document.close();
+  pw.onload=function(){ pw.focus(); pw.print(); };
+  setTimeout(function(){ try{ pw.focus(); pw.print(); }catch(e){} }, 1200);
+
+  hideOv();
+}
+
+function genFormHtml(isTax, dateStr){
+  const bankCode=F.bankCode.split(' - ')[0]||F.bankCode;
+  let html='';
+  for(let i=0;i<2;i++){
+    html+=`
+    <div class="print-page" style="font-family:'Noto Sans TC',sans-serif;color:#111;width:277mm;min-height:185mm;display:grid;grid-template-columns:1fr 1px 1fr;font-size:8.5pt;line-height:1.75;background:#fff;margin-bottom:4mm;">
+      <div style="padding:10mm 9mm">
+        <div style="text-align:right;font-size:7.5pt;color:#555;margin-bottom:3px">附件一</div>
+        <div style="text-align:center;font-size:13pt;font-weight:700;letter-spacing:2px;margin-bottom:8px">申請退稅同意書</div>
+        <div style="display:flex;align-items:baseline;gap:3px;margin-bottom:4px;flex-wrap:wrap">
+          <span>立同意書人：</span><span style="border-bottom:1px solid #333;flex:1;min-width:60px">${F.name}</span>
+          <span>（以下簡稱買受人）向銘勁汽車股份有限公司（以下簡稱出賣人）</span>
+        </div>
+        <div style="margin-bottom:4px">購買由台灣英倫摩里斯汽車事業（股）公司（以下簡稱品牌公司）總經銷。</div>
+        <div style="margin-bottom:6px">
+          <span style="font-weight:700">${F.maker}</span> 製造之 MG 品牌、
+          <span style="font-weight:700">${F.car}</span> 車型汽車（以下簡稱新車）乙輛。
+        </div>
+        <div style="font-size:8pt;text-align:justify;margin-bottom:5px">
+          ${isTax?'為配合政府公告實施之貨物稅條例第十二條之五有關購買新小型汽車減徵退還新車貨物稅（以下簡稱專案領牌退還款），品牌公司將協助買受人辦理申請新小型汽車退還減徵新車貨物稅（五萬元；惟新車所繳貨物稅未達五萬元者，實際退還金額以主管機關核定為準）。所需之手續，買受人特此同意須備齊相關證明文件提供予出賣人，由出賣人提供予品牌公司，以便向主管機關申請前述專案領牌退還款。俟主管機關核實買受人資格與全部文件無誤並予以撥款後，再由出賣人轉支付予買受人。':'為配合政府公告實施之貨物稅條例第十二條之五有關中古汽車報廢或出口換購新車退還新車貨物稅（以下簡稱專案退還款），品牌公司將協助買受人辦理申請中古汽車報廢或出口換購新車退還新車貨物稅（五萬元；惟新車所繳貨物稅未達五萬元者，實際退還金額以主管機關核定為準）。所需之手續，買受人特此同意須備齊相關證明文件提供予出賣人，由出賣人提供予品牌公司申請前述專案退還款。俟主管機關核實買受人資格與全部文件無誤並予以撥款後，再由出賣人轉支付予買受人。'}
+        </div>
+        ${isTax?`
+        <div style="font-weight:700;margin-bottom:2px;font-size:8pt">一、專案領牌退還款之申請資格：</div>
+        <div style="padding-left:10px;font-size:8pt">（一）於貨物稅條例第十二條之五公告生效日起五年內購買新小型小客車。前述生效期間為自民國114年9月7日起至119年12月31日止。</div>
+        <div style="padding-left:10px;font-size:8pt">（二）購買新小型小客車，以公路監理機關核發加蓋戳記之汽車新領牌照登記書所載發照日期之次日起算六個月內。</div>
+        <div style="font-weight:700;margin:4px 0 2px;font-size:8pt">二、相關證明文件條列於證明文件簽收單（本同意書右側）。</div>
+        <div style="font-weight:700;margin-bottom:3px;font-size:8pt">三、出賣人收到核撥之專案領牌退還款後，依照買受人指定之下列取款方式，於____日內支付予買受人：</div>
+        `:`
+        <div style="font-weight:700;margin-bottom:2px;font-size:8pt">一、專案退還款之申請資格：</div>
+        <div style="padding-left:10px;font-size:8pt">（一）於貨物稅條例第十二條之五公告生效日起五年內，報廢或出口中古汽車，購買新小型小客車。前述生效期間為自民國110年1月8日起至115年1月7日止。</div>
+        <div style="padding-left:10px;font-size:8pt">（二）中古汽車領照滿一年之出廠十年以上小客車、小貨車、小客貨兩用車，前述登記滿一年期間內之中古汽車不得有停駛、讓銷、虧損等紀錄。</div>
+        <div style="padding-left:10px;font-size:8pt">（三）中古汽車報廢或出口前後六個月購置新車並完成新領牌照登記。</div>
+        <div style="padding-left:10px;font-size:8pt">（四）斷尾之買受人與中古汽車報廢或出口之買受人須為同一人或配偶與其同一戶二等親以內之親屬。</div>
+        <div style="font-weight:700;margin:4px 0 3px;font-size:8pt">二、出賣人收到核撥之退還款後，依照買受人指定之下列取款方式，於____日內支付予買受人：</div>
+        `}
+        <div style="display:flex;align-items:baseline;gap:3px;margin-bottom:3px;font-size:8pt">
+          <span style="width:10px;height:10px;border:1px solid #555;flex-shrink:0;display:inline-block"></span>
+          <span>銀行／郵局帳號：${bankCode}-${F.branch}-${F.account}（附上存摺帳號頁之影本）</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:3px;font-size:8pt;margin-bottom:5px">
+          <span style="width:10px;height:10px;border:1px solid #555;flex-shrink:0;display:inline-block"></span>
+          <span>支票（禁止背書轉讓）：抬頭為買受人</span>
+        </div>
+        <div style="font-size:7.5pt;text-align:justify;margin-bottom:6px">本同意書自立書人簽署之日起生效，正本一式二份，買受人及出賣人各執乙份為憑。</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
+          <div><div style="font-size:8pt;margin-bottom:3px">買　受　人：（簽章）</div><div style="border:1px dashed #555;min-height:30px;padding:3px"></div></div>
+          <div><div style="font-size:8pt;margin-bottom:3px">出　賣　人：（簽章）</div><div style="border:1px dashed #555;min-height:30px;padding:3px"></div></div>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:3px;margin-top:6px;font-size:8pt">
+          <span>身分證字號：</span><div style="border:1px dashed #555;padding:2px 4px;min-height:20px;min-width:120px">${F.idno}</div>
+        </div>
+        <div style="display:flex;gap:2px;align-items:baseline;font-size:8pt;margin-top:5px;justify-content:center">
+          中<span style="border-bottom:1px dashed #555;min-width:20px"></span>華<span style="border-bottom:1px dashed #555;min-width:20px"></span>民<span style="border-bottom:1px dashed #555;min-width:20px"></span>國<span style="border-bottom:1px dashed #555;min-width:20px"></span>年<span style="border-bottom:1px dashed #555;min-width:20px"></span>月<span style="border-bottom:1px dashed #555;min-width:20px"></span>日
+        </div>
+      </div>
+      <div style="background:#ccc"></div>
+      <div style="padding:10mm 9mm">
+        <div style="text-align:right;font-size:7.5pt;color:#555;margin-bottom:3px">附件二</div>
+        <div style="text-align:center;font-size:13pt;font-weight:700;letter-spacing:2px;margin-bottom:8px">證明文件簽收單</div>
+        ${isTax?`
+        <div style="display:flex;align-items:center;gap:5px;font-size:8.5pt;margin-bottom:4px">
+          <span style="width:9px;height:9px;border:1px solid #555;display:inline-block"></span>
+          <span style="font-weight:700">新購買新小型小客車：</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:8pt">
+          <thead><tr><th style="border:.5px solid #999;background:#f0f0f0;padding:2px 5px;text-align:left">證明文件</th><th style="border:.5px solid #999;background:#f0f0f0;padding:2px 5px;width:90px;text-align:center">出賣人簽收</th></tr></thead>
+          <tbody>
+            <tr><td style="border:.5px solid #999;padding:2px 5px;height:30px">1. 監理機關加蓋戳記之新車汽車新領牌照登記書影本</td><td style="border:.5px solid #999"></td></tr>
+            <tr><td style="border:.5px solid #999;padding:2px 5px;height:30px">2. 新車行照影本</td><td style="border:.5px solid #999"></td></tr>
+            <tr><td style="border:.5px solid #999;padding:2px 5px;height:30px">3. 銀行／郵局存摺影本</td><td style="border:.5px solid #999"></td></tr>
+          </tbody>
+        </table>
+        `:`
+        <div style="display:flex;align-items:center;gap:5px;font-size:8.5pt;margin-bottom:3px">
+          <span style="width:9px;height:9px;border:1px solid #555;display:inline-block"></span>
+          <span style="font-weight:700">中古汽車報廢換購新車：</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:7.5pt;margin-bottom:4px">
+          <thead><tr><th style="border:.5px solid #999;background:#f0f0f0;padding:2px 4px;text-align:left">證明文件</th><th style="border:.5px solid #999;background:#f0f0f0;padding:2px 4px;width:90px;text-align:center">出賣人簽收</th></tr></thead>
+          <tbody>
+            <tr><td style="border:.5px solid #999;padding:2px 4px;height:24px">1. 監理機關加蓋戳記之新車汽車新領牌照登記書影本</td><td style="border:.5px solid #999"></td></tr>
+            <tr><td style="border:.5px solid #999;padding:2px 4px;height:24px">2. 新車貨物稅完稅證明文件影本（由車廠或代理商提供）</td><td style="border:.5px solid #999"></td></tr>
+            <tr><td style="border:.5px solid #999;padding:2px 4px;height:24px">3. 中古汽車之行車執照影本</td><td style="border:.5px solid #999"></td></tr>
+            <tr><td style="border:.5px solid #999;padding:2px 4px;height:24px">4. 中古汽車之汽車各項異動登記書報廢證明影本</td><td style="border:.5px solid #999"></td></tr>
+            <tr><td style="border:.5px solid #999;padding:2px 4px;height:24px">5. 行政院環境保護署廢機動車輛回收管制聯單影本或回收證明單影本</td><td style="border:.5px solid #999"></td></tr>
+            <tr><td style="border:.5px solid #999;padding:2px 4px;height:24px">6. 戶口名簿影本（新舊車主同一人免附）</td><td style="border:.5px solid #999"></td></tr>
+          </tbody>
+        </table>
+        <div style="display:flex;align-items:center;gap:5px;font-size:8.5pt;margin-bottom:3px">
+          <span style="width:9px;height:9px;border:1px solid #555;display:inline-block"></span>
+          <span style="font-weight:700">中古汽車出口換購新車：</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:7.5pt">
+          <thead><tr><th style="border:.5px solid #999;background:#f0f0f0;padding:2px 4px;text-align:left">證明文件</th><th style="border:.5px solid #999;background:#f0f0f0;padding:2px 4px;width:90px;text-align:center">出賣人簽收</th></tr></thead>
+          <tbody>
+            <tr><td style="border:.5px solid #999;padding:2px 4px;height:24px">1. 監理機關加蓋戳記之新車汽車新領牌照登記書影本</td><td style="border:.5px solid #999"></td></tr>
+            <tr><td style="border:.5px solid #999;padding:2px 4px;height:24px">2. 新車貨物稅完稅證明文件影本（由車廠或代理商提供）</td><td style="border:.5px solid #999"></td></tr>
+            <tr><td style="border:.5px solid #999;padding:2px 4px;height:24px">3. 中古汽車之行車執照影本</td><td style="border:.5px solid #999"></td></tr>
+            <tr><td style="border:.5px solid #999;padding:2px 4px;height:24px">4. 中古汽車之汽車各項異動登記書徹銷證明影本</td><td style="border:.5px solid #999"></td></tr>
+            <tr><td style="border:.5px solid #999;padding:2px 4px;height:24px">5. 中古汽車之出口報單出口證明聯影本及其他出口證明影本</td><td style="border:.5px solid #999"></td></tr>
+            <tr><td style="border:.5px solid #999;padding:2px 4px;height:24px">6. 戶口名簿影本（新舊車主同一人免附）</td><td style="border:.5px solid #999"></td></tr>
+          </tbody>
+        </table>
+        `}
+        <div style="font-size:7.5pt;text-align:justify;margin:6px 0">買受人確認上述證明文件無誤且皆合乎規定之日期，提供予出賣人及品牌公司，並同意前述證明文件及所提供之個人資料於本同意書之目的範圍內蒐集、處理及利用。倘該等證明文件經主管機關審核資格不符而不予核撥，相關責任概由買受人自行承擔。</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px">
+          <div><div style="font-size:8pt;margin-bottom:3px">買　受　人：（簽章）</div><div style="border:1px dashed #555;min-height:30px;padding:3px"></div></div>
+          <div><div style="font-size:8pt;margin-bottom:3px">出　賣　人：（簽章）</div><div style="border:1px dashed #555;min-height:30px;padding:3px"></div></div>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:3px;margin-top:6px;font-size:8pt">
+          <span>身分證字號：</span><div style="border:1px dashed #555;padding:2px 4px;min-height:20px;min-width:120px">${F.idno}</div>
+        </div>
+        <div style="display:flex;gap:2px;align-items:baseline;font-size:8pt;margin-top:5px;justify-content:center">
+          中<span style="border-bottom:1px dashed #555;min-width:20px"></span>華<span style="border-bottom:1px dashed #555;min-width:20px"></span>民<span style="border-bottom:1px dashed #555;min-width:20px"></span>國<span style="border-bottom:1px dashed #555;min-width:20px"></span>年<span style="border-bottom:1px dashed #555;min-width:20px"></span>月<span style="border-bottom:1px dashed #555;min-width:20px"></span>日
+        </div>
+      </div>
+    </div>`;
+  }
+  return html;
+}
+
+function genReceiptHtml(isTax, dateStr, locName){
+  const title=isTax?'【貨物稅】':'【報廢車】';
+  const bankCode=F.bankCode.split(' - ')[0]||F.bankCode;
+  const hasA=!!F.files[isTax?'tax-A':'tr-A'];
+  const hasB=!!F.files[isTax?'tax-B':'tr-B'];
+  const hasC=!!F.files[isTax?'tax-C':'tr-C'];
+  const hasD=!isTax&&!!F.files['tr-D'];
+  const hasE=!isTax&&!!F.files['tr-E'];
+  const hasF=!isTax&&!!F.files['tr-F'];
+  const hasG=!isTax&&!!F.files['tr-G'];
+  const hasH=!isTax&&!!F.files['tr-H'];
+
+  const chk=(v)=>v?'☑':'☐';
+
+  const col=`
+    <div style="flex:1;border:1px solid #333;padding:6px 8px;font-size:8pt;font-family:'Noto Sans TC',sans-serif">
+      <div style="background:#1A1A1A;color:#fff;text-align:center;font-weight:700;font-size:9pt;padding:4px;margin:-6px -8px 8px;letter-spacing:1px">
+        ${title} 退稅申請資料回條<span style="font-size:7.5pt;font-weight:400">（請按照順序繳交）</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+        <span>新車車主名稱：<strong>${F.name}</strong></span>
+        <span>收件日期：${dateStr.split('/')[0]} / ${dateStr.split('/')[1]} /</span>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:8pt;margin-bottom:6px">
+        <tbody>
+          <tr><td style="padding:2px 0;width:16px">${chk(true)}</td><td>① MGT申請退稅同意書暨證明文件簽收單 ×2</td></tr>
+          <tr><td style="padding:2px 0">${chk(hasA)}</td><td>② 新車牌照登記書 &nbsp;領牌日期：${F.licDate}</td></tr>
+          ${isTax?`
+          <tr><td style="padding:2px 0">${chk(hasB)}</td><td>③ 新車行照</td></tr>
+          <tr><td style="padding:2px 0">${chk(hasC)}</td><td>④ 新車主帳戶存摺封面 &nbsp;銀行代碼：${bankCode} / 分行支號：${F.branch}</td></tr>
+          `:`
+          <tr><td style="padding:2px 0">${chk(hasB)}</td><td>③ 新車行照</td></tr>
+          <tr><td style="padding:2px 0">${chk(hasC)}</td><td>④ 舊車行照</td></tr>
+          <tr><td style="padding:2px 0">${chk(hasD)}</td><td>⑤ 新車主身分証</td></tr>
+          <tr><td style="padding:2px 0">${chk(hasE)}</td><td>⑥ 舊車証明文件（${F.relation}）</td></tr>
+          <tr><td style="padding:2px 0">${chk(hasF)}</td><td>⑦ 車輛異動登記書 &nbsp;報廢日期：${F.scrapDate}</td></tr>
+          <tr><td style="padding:2px 0">${chk(hasG)}</td><td>⑧ 廢機動車輛回收管制聯單</td></tr>
+          <tr><td style="padding:2px 0">${chk(hasH)}</td><td>⑨ 新車主帳戶存摺封面 &nbsp;銀行代碼：${bankCode} / 分行支號：${F.branch}</td></tr>
+          `}
+        </tbody>
+      </table>
+      <table style="width:100%;border-collapse:collapse;font-size:8pt">
+        <thead>
+          <tr>
+            <th style="border:.5px solid #999;background:#1A1A1A;color:#fff;padding:3px 5px;text-align:left">繳件人（據點名稱）</th>
+            <th style="border:.5px solid #999;background:#1A1A1A;color:#fff;padding:3px 5px;width:90px;text-align:center">收件據點蓋章</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="border:.5px solid #999;padding:3px 5px;height:28px">${locName} &nbsp;/&nbsp; ${F.staff}</td><td style="border:.5px solid #999"></td></tr>
+        </tbody>
+      </table>
+    </div>`;
+
+  return `
+  <div class="print-page" style="font-family:'Noto Sans TC',sans-serif;width:277mm;background:#fff;padding:8mm;display:flex;gap:8mm;align-items:flex-start;margin-bottom:4mm;">
+    ${col}
+    <div style="border-left:1px dashed #999;align-self:stretch"></div>
+    ${col}
+  </div>`;
+}
+
+function genAttachHtml(isTax, imgCache, dateStr, locName){
+  const header=`<div style="font-size:8pt;color:#555;border-bottom:.5px solid #ccc;padding-bottom:4px;margin-bottom:8px">
+    客戶姓名：<strong>${F.name}</strong> &nbsp;|&nbsp; 
+    ${isTax?'車牌號碼':'引擎號碼'}：<strong>${F.plate}</strong> &nbsp;|&nbsp; 
+    申請類型：<strong>${isTax?'新車貨物稅':'舊換新'}</strong> &nbsp;|&nbsp; 
+    據點：<strong>${locName}</strong> &nbsp;|&nbsp; 
+    日期：<strong>${dateStr}</strong>
+  </div>`;
+
+  let html='';
+  const imgStyle='max-width:100%;max-height:100%;object-fit:contain;';
+
+  if(isTax){
+    // 頁1：領牌登記書（橫式單頁）
+    if(imgCache['tax-A']){
+      html+=`<div class="print-page" style="width:277mm;height:190mm;background:#fff;padding:6mm 8mm;font-family:'Noto Sans TC',sans-serif;display:flex;flex-direction:column">
+        ${header}
+        <div style="text-align:center;font-size:8pt;color:#555;margin-bottom:6px">A. 新車領牌登記書</div>
+        <div style="text-align:center;height:155mm;display:flex;align-items:center;justify-content:center"><img src="${imgCache['tax-A']}" style="max-width:100%;max-height:155mm;object-fit:contain;transform:rotate(-90deg)"></div>
+      </div>`;
+    }
+    // 頁2：新車行照（左）+ 存摺封面（右）橫式兩欄
+    html+=`<div class="print-page" style="width:277mm;height:190mm;background:#fff;padding:6mm 8mm;font-family:'Noto Sans TC',sans-serif;display:flex;flex-direction:column">
+      ${header}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10mm;height:155mm;flex:1">
+        <div>
+          <div style="text-align:center;font-size:8pt;color:#555;margin-bottom:6px">B. 新車行照</div>
+          ${imgCache['tax-B']
+            ?`<div style="text-align:center;height:145mm;display:flex;align-items:center;justify-content:center"><img src="${imgCache['tax-B']}" style="max-width:100%;max-height:145mm;object-fit:contain;transform:rotate(-90deg)"></div>`
+            :'<div style="border:1px dashed #ccc;height:145mm;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:10pt">未上傳</div>'}
+        </div>
+        <div>
+          <div style="text-align:center;font-size:8pt;color:#555;margin-bottom:6px">C. 新車主存摺封面</div>
+          ${imgCache['tax-C']
+            ?`<div style="text-align:center;height:145mm;display:flex;align-items:center;justify-content:center"><img src="${imgCache['tax-C']}" style="max-width:100%;max-height:145mm;object-fit:contain;transform:rotate(-90deg)"></div>`
+            :'<div style="border:1px dashed #ccc;height:145mm;display:flex;align-items:center;justify-content:center;color:#bbb;font-size:10pt">未上傳</div>'}
+        </div>
+      </div>
+    </div>`;
+  } else {
+    // 頁1：領牌登記書（橫式單頁）
+    if(imgCache['tr-A']){
+      html+=`<div class="print-page" style="width:277mm;height:190mm;background:#fff;padding:6mm 8mm;font-family:'Noto Sans TC',sans-serif;display:flex;flex-direction:column">
+        ${header}
+        <div style="text-align:center;font-size:8pt;color:#555;margin-bottom:6px">A. 新車領牌登記書</div>
+        <div style="text-align:center;height:155mm;display:flex;align-items:center;justify-content:center"><img src="${imgCache['tr-A']}" style="max-width:100%;max-height:155mm;object-fit:contain;transform:rotate(-90deg)"></div>
+      </div>`;
+    }
+    // 頁2：新車行照（左）+ 存摺封面（右）橫式兩欄
+    html+=`<div class="print-page" style="width:277mm;height:190mm;background:#fff;padding:6mm 8mm;font-family:'Noto Sans TC',sans-serif;display:flex;flex-direction:column">
+      ${header}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10mm;height:155mm;flex:1">
+        <div>
+          <div style="text-align:center;font-size:8pt;color:#555;margin-bottom:6px">B. 新車行照</div>
+          ${imgCache['tr-B']
+            ?`<div style="height:145mm;display:flex;align-items:center;justify-content:center"><img src="${imgCache['tr-B']}" style="max-width:100%;max-height:145mm;object-fit:contain;transform:rotate(-90deg)"></div>`
+            :'<div style="border:1px dashed #ccc;height:145mm;display:flex;align-items:center;justify-content:center;color:#bbb">未上傳</div>'}
+        </div>
+        <div>
+          <div style="text-align:center;font-size:8pt;color:#555;margin-bottom:6px">H. 新車主存摺封面</div>
+          ${imgCache['tr-H']
+            ?`<div style="height:145mm;display:flex;align-items:center;justify-content:center"><img src="${imgCache['tr-H']}" style="max-width:100%;max-height:145mm;object-fit:contain;transform:rotate(-90deg)"></div>`
+            :'<div style="border:1px dashed #ccc;height:145mm;display:flex;align-items:center;justify-content:center;color:#bbb">未上傳</div>'}
+        </div>
+      </div>
+    </div>`;
+    // 頁3：舊車行照(左上) + 身分証(左下) + 舊車證明(右)
+    if(imgCache['tr-C']||imgCache['tr-D']||imgCache['tr-E']){
+      html+=`<div class="print-page" style="width:277mm;height:190mm;background:#fff;padding:6mm 8mm;font-family:'Noto Sans TC',sans-serif;display:flex;flex-direction:column">
+        ${header}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8mm;height:160mm;flex:1">
+          <div style="display:grid;grid-template-rows:1fr 1fr;gap:6mm">
+            <div>
+              <div style="text-align:center;font-size:8pt;color:#555;margin-bottom:4px">C. 舊車行照</div>
+              ${imgCache['tr-C']?`<div style="text-align:center"><img src="${imgCache['tr-C']}" style="${imgStyle}max-height:72mm"></div>`:'<div style="border:1px dashed #ccc;height:72mm;display:flex;align-items:center;justify-content:center;color:#ccc">未上傳</div>'}
+            </div>
+            <div>
+              <div style="text-align:center;font-size:8pt;color:#555;margin-bottom:4px">D. 新車主身分証</div>
+              ${imgCache['tr-D']?`<div style="text-align:center"><img src="${imgCache['tr-D']}" style="${imgStyle}max-height:72mm"></div>`:'<div style="border:1px dashed #ccc;height:72mm;display:flex;align-items:center;justify-content:center;color:#ccc">未上傳</div>'}
+            </div>
+          </div>
+          <div>
+            <div style="text-align:center;font-size:8pt;color:#555;margin-bottom:4px">E. 舊車証明文件（${F.relation}）</div>
+            ${imgCache['tr-E']
+              ?(Array.isArray(imgCache['tr-E'])
+                ?imgCache['tr-E'].map(src=>`<img src="${src}" style="max-width:100%;max-height:70mm;object-fit:contain;transform:rotate(-90deg);display:block;margin-bottom:4px">`).join('')
+                :`<img src="${imgCache['tr-E']}" style="max-width:100%;max-height:150mm;object-fit:contain;transform:rotate(-90deg)">`)
+              :'<div style="border:1px dashed #ccc;height:150mm;display:flex;align-items:center;justify-content:center;color:#ccc">未上傳</div>'}
+          </div>
+        </div>
+      </div>`;
+    }
+    // 頁4：車輛異動 + 回收聯單
+    if(imgCache['tr-F']||imgCache['tr-G']){
+      html+=`<div class="print-page" style="width:277mm;height:190mm;background:#fff;padding:6mm 8mm;font-family:'Noto Sans TC',sans-serif;display:flex;flex-direction:column">
+        ${header}
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8mm;height:160mm;flex:1">
+          <div><div style="text-align:center;font-size:8pt;color:#555;margin-bottom:4px">F. 車輛異動登記書</div>
+            ${imgCache['tr-F']?`<div style="text-align:center"><img src="${imgCache['tr-F']}" style="${imgStyle}max-height:150mm"></div>`:'<div style="border:1px dashed #ccc;height:150mm;display:flex;align-items:center;justify-content:center;color:#ccc">未上傳</div>'}
+          </div>
+          <div><div style="text-align:center;font-size:8pt;color:#555;margin-bottom:4px">G. 廢機動車輛回收管制聯單</div>
+            ${imgCache['tr-G']?`<div style="text-align:center"><img src="${imgCache['tr-G']}" style="${imgStyle}max-height:150mm"></div>`:'<div style="border:1px dashed #ccc;height:150mm;display:flex;align-items:center;justify-content:center;color:#ccc">未上傳</div>'}
+          </div>
+        </div>
+      </div>`;
+    }
+  }
+  return html;
+}
+
+// ── 工具 ─────────────────────────────────────────
+function showOv(t){document.getElementById('ov-txt').textContent=t;document.getElementById('ov').classList.remove('hide');}
+function hideOv(){document.getElementById('ov').classList.add('hide');}
+function toB64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file);});}
+</script>
+</body>
+</html>
